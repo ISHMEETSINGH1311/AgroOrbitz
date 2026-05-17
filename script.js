@@ -2,7 +2,7 @@
  * AgroOrbitz - FINAL FULL SCRIPT.JS
  *******************************************************/
 
-const API_BASE = "http://https://agroorbitz-api.onrender.com.0.0.1:8000";
+const API_BASE = "https://agroorbitz-api.onrender.com";
 /* =========================================
    LOGIN SYSTEM
 ========================================= */
