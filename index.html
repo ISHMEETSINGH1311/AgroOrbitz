@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    AgroOrbitz - Agri-Tech Dashboard
+  </title>
+
+  <!-- Google Fonts -->
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+
+  <!-- CSS -->
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+</head>
+
+<body onload="checkLogin()">
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+
+  <nav class="navbar">
+
+    <div class="nav-left">
+
+      <div class="brand">
+
+        <div class="brand-dot"></div>
+
+        <h1>
+          AgroOrbitz
+        </h1>
+
+      </div>
+
+    </div>
+
+    <div class="nav-center">
+
+      <a href="#dashboard">
+        Dashboard
+      </a>
+
+      <a href="#about">
+        About
+      </a>
+
+      <a href="#features">
+        Features
+      </a>
+
+    </div>
+
+    <div class="nav-right">
+      <button
+  onclick="logoutUser()"
+  class="btn btn-primary"
+  style="margin-left:14px;"
+>
+  Logout
+</button>
+
+      <!-- LANGUAGE SELECTOR -->
+
+      <select
+        id="language-select"
+        class="select"
+        style="
+          width:170px;
+          margin-right:14px;
+        "
+      >
+
+        <option value="en">
+          English
+        </option>
+
+        <option value="hi">
+          हिन्दी
+        </option>
+
+        <option value="pa">
+          Punjabi
+        </option>
+
+        <option value="ta">
+          Tamil
+        </option>
+
+        <option value="te">
+          Telugu
+        </option>
+
+        <option value="mr">
+          Marathi
+        </option>
+
+        <option value="cg">
+          Chhattisgarhi
+        </option>
+
+        <option value="fr">
+          French
+        </option>
+
+        <option value="de">
+          German
+        </option>
+
+        <option value="ja">
+          Japanese
+        </option>
+
+      </select>
+
+      <span class="tagline">
+        Satellite-Powered Farm Intelligence
+      </span>
+
+    </div>
+
+  </nav>
+
+  <!-- =========================
+       MAIN GRID
+  ========================== -->
+
+  <main
+    id="dashboard"
+    class="grid-container"
+  >
+
+    <!-- WEATHER -->
+
+    <section class="card">
+
+      <div class="card-head weather-head">
+
+        <div>
+
+          <h2>
+            Weather & AQI
+          </h2>
+
+          <div class="weather-search">
+
+            <input
+              type="text"
+              id="city-input"
+              class="text-input city-input"
+              placeholder="Enter any city..."
+              value="Delhi"
+            >
+
+            <button
+              type="button"
+              id="btn-city-search"
+              class="btn btn-primary city-btn"
+            >
+              Search
+            </button>
+
+            <button
+              type="button"
+              id="voice-btn"
+              class="btn btn-primary"
+              style="margin-left:10px;"
+            >
+              🎤 Voice
+            </button>
+
+          </div>
+
+        </div>
+
+        <span class="chip chip-emerald">
+          Live
+        </span>
+
+      </div>
+
+      <div class="stat-grid">
+
+        <div class="stat">
+
+          <div class="stat-top">
+
+            <span class="icon">
+              🌡️
+            </span>
+
+            <span class="label">
+              Temperature
+            </span>
+
+          </div>
+
+          <div class="stat-value">
+
+            <span id="weather-temp">
+              --
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="stat">
+
+          <div class="stat-top">
+
+            <span class="icon">
+              💧
+            </span>
+
+            <span class="label">
+              Humidity
+            </span>
+
+          </div>
+
+          <div class="stat-value">
+
+            <span id="weather-humidity">
+              --
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="stat">
+
+          <div class="stat-top">
+
+            <span class="icon">
+              💨
+            </span>
+
+            <span class="label">
+              Wind Speed
+            </span>
+
+          </div>
+
+          <div class="stat-value">
+
+            <span id="weather-wind">
+              --
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="stat">
+
+          <div class="stat-top">
+
+            <span class="icon">
+              🌧️
+            </span>
+
+            <span class="label">
+              Rain Probability
+            </span>
+
+          </div>
+
+          <div class="stat-value">
+
+            <span id="weather-rain">
+              --
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="aqi-row">
+
+        <div>
+
+          <div class="mini-label">
+            Air Quality Index
+          </div>
+
+          <div class="aqi-value">
+
+            <span id="aqi-level">
+              --
+            </span>
+
+            <span
+              id="aqi-badge"
+              class="pill"
+            >
+              --
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="aqi-bar">
+
+          <div
+            id="aqi-fill"
+            class="aqi-fill"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- CROP ROTATOR -->
+
+    <section class="card">
+
+      <div class="card-head">
+
+        <h2>
+          Crop Rotator
+        </h2>
+
+        <span class="chip">
+          Rotation
+        </span>
+
+      </div>
+
+      <div class="form-row">
+
+        <label
+          for="previous-crop"
+          class="mini-label"
+        >
+          Previous Crop
+        </label>
+
+        <select
+          id="previous-crop"
+          class="select"
+        >
+
+          <option value="wheat">
+            Wheat
+          </option>
+
+          <option value="maize">
+            Maize
+          </option>
+
+          <option value="rice">
+            Rice
+          </option>
+
+          <option value="corn">
+            Corn
+          </option>
+
+          <option value="soybean">
+            Soybean
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="callout">
+
+        <div class="mini-label">
+          Recommended Next
+        </div>
+
+        <div
+          class="callout-value"
+          id="recommended-crop"
+        >
+          --
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SMART CROP WEATHER ADVISOR -->
+
+    <section class="card">
+
+      <div class="card-head">
+
+        <h2>
+          Smart Crop Weather Advisor
+        </h2>
+
+        <span class="chip chip-emerald">
+          AI
+        </span>
+
+      </div>
+
+      <div class="callout">
+
+        <div class="mini-label">
+          AI Crop Recommendation
+        </div>
+
+        <div
+          class="callout-value"
+          id="crop-weather-status"
+        >
+          --
+        </div>
+
+        <div
+          class="callout-sub"
+          id="crop-weather-message"
+        >
+          Waiting for analysis...
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SOIL ANALYZER -->
+
+    <section class="card">
+
+      <div class="card-head">
+
+        <h2>
+          Soil Condition Analyzer
+        </h2>
+
+        <span class="chip">
+          ML
+        </span>
+
+      </div>
+
+      <div class="input-grid">
+
+        <div class="input-item">
+
+          <label>
+            Moisture (%)
+          </label>
+
+          <input
+            id="in-moisture"
+            type="number"
+            value="30"
+          >
+
+        </div>
+
+        <div class="input-item">
+
+          <label>
+            Nitrogen (ppm)
+          </label>
+
+          <input
+            id="in-nitrogen"
+            type="number"
+            value="20"
+          >
+
+        </div>
+
+        <div class="input-item">
+
+          <label>
+            Organic Matter (%)
+          </label>
+
+          <input
+            id="in-om"
+            type="number"
+            value="4"
+          >
+
+        </div>
+
+        <div class="input-item">
+
+          <label>
+            Compaction (1-5)
+          </label>
+
+          <input
+            id="in-compaction"
+            type="number"
+            value="2"
+          >
+
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        id="btn-soil-analyze"
+        class="btn btn-primary"
+        style="margin-top:16px;"
+      >
+        Analyze Soil
+      </button>
+
+    </section>
+
+    <!-- IRRIGATION -->
+
+    <section class="card">
+
+      <div class="card-head">
+
+        <h2>
+          Irrigation Advisor
+        </h2>
+
+        <span class="chip chip-emerald">
+          AI
+        </span>
+
+      </div>
+
+      <div class="callout">
+
+        <div class="mini-label">
+          Irrigation Recommendation
+        </div>
+
+        <div
+          class="callout-value"
+          id="irrigation-status"
+        >
+          --
+        </div>
+
+        <div
+          class="callout-sub"
+          id="irrigation-message"
+        >
+          Waiting for analysis...
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- PDF REPORT -->
+
+    <section class="card">
+
+      <div class="card-head">
+
+        <h2>
+          Farm Report
+        </h2>
+
+        <span class="chip chip-emerald">
+          PDF
+        </span>
+
+      </div>
+
+      <button
+        id="download-report-btn"
+        class="btn btn-primary"
+      >
+        Download Farm Report
+      </button>
+
+    </section>
+
+    <!-- NDVI MONITOR -->
+
+    <section class="card">
+
+      <div class="card-head">
+
+        <h2>
+          Satellite NDVI Monitor
+        </h2>
+
+        <span class="chip chip-emerald">
+          Satellite
+        </span>
+
+      </div>
+
+      <div class="form-row">
+
+        <label class="mini-label">
+          Farm Condition
+        </label>
+
+        <select
+          id="ndvi-condition"
+          class="select"
+        >
+
+          <option value="healthy">
+            Healthy Farm
+          </option>
+
+          <option value="moderate">
+            Moderate Farm
+          </option>
+
+          <option value="poor">
+            Poor Farm
+          </option>
+
+        </select>
+
+      </div>
+
+      <button
+        id="btn-ndvi"
+        class="btn btn-primary"
+        style="margin-top:16px;"
+      >
+        Analyze NDVI
+      </button>
+
+      <div
+        class="callout"
+        style="margin-top:20px;"
+      >
+
+        <div class="mini-label">
+          NDVI Score
+        </div>
+
+        <div
+          class="callout-value"
+          id="ndvi-score"
+        >
+          --
+        </div>
+
+        <div
+          class="callout-sub"
+          id="ndvi-message"
+        >
+          Waiting for analysis...
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+  <!-- AI DISEASE DETECTOR -->
+<section class="card">
+
+  <div class="card-head">
+
+    <h2>
+      AI Plant Disease Detector
+    </h2>
+
+    <span class="chip chip-emerald">
+      Vision AI
+    </span>
+
+  </div>
+
+  <div class="form-row">
+
+    <label class="mini-label">
+      Leaf Condition
+    </label>
+
+    <select
+      id="leaf-condition"
+      class="select"
+    >
+
+      <option value="healthy">
+        Healthy Leaf
+      </option>
+
+      <option value="yellow">
+        Yellow Leaf
+      </option>
+
+      <option value="spots">
+        Brown Spots
+      </option>
+
+      <option value="dry">
+        Dry Leaf
+      </option>
+
+    </select>
+
+  </div>
+
+  <button
+    id="btn-disease"
+    class="btn btn-primary"
+    style="margin-top:16px;"
+  >
+    Detect Disease
+  </button>
+
+  <div
+    class="callout"
+    style="margin-top:20px;"
+  >
+
+    <div class="mini-label">
+      Disease Prediction
+    </div>
+
+    <div
+      class="callout-value"
+      id="disease-status"
+    >
+      --
+    </div>
+
+    <div
+      class="callout-sub"
+      id="disease-message"
+    >
+      Waiting for AI analysis...
+    </div>
+
+  </div>
+
+</section>
+<!-- AI YIELD PREDICTOR -->
+<section class="card">
+
+  <div class="card-head">
+
+    <h2>
+      AI Yield Prediction
+    </h2>
+
+    <span class="chip chip-emerald">
+      ML
+    </span>
+
+  </div>
+
+  <div class="form-row">
+
+    <label class="mini-label">
+      Crop Type
+    </label>
+
+    <select
+      id="yield-crop"
+      class="select"
+    >
+
+      <option value="rice">
+        Rice
+      </option>
+
+      <option value="wheat">
+        Wheat
+      </option>
+
+      <option value="maize">
+        Maize
+      </option>
+
+    </select>
+
+  </div>
+
+  <button
+    id="btn-yield"
+    class="btn btn-primary"
+    style="margin-top:16px;"
+  >
+    Predict Yield
+  </button>
+
+  <div
+    class="callout"
+    style="margin-top:20px;"
+  >
+
+    <div class="mini-label">
+      Predicted Yield
+    </div>
+
+    <div
+      class="callout-value"
+      id="yield-status"
+    >
+      --
+    </div>
+
+    <div
+      class="callout-sub"
+      id="yield-message"
+    >
+      Waiting for prediction...
+    </div>
+
+  </div>
+
+</section>
+<!-- AI DISASTER ALERT -->
+<section class="card">
+
+  <div class="card-head">
+
+    <h2>
+      AI Disaster Alert System
+    </h2>
+
+    <span class="chip chip-emerald">
+      Safety AI
+    </span>
+
+  </div>
+
+  <button
+    id="btn-disaster"
+    class="btn btn-primary"
+  >
+    Check Disaster Risk
+  </button>
+
+  <div
+    class="callout"
+    style="margin-top:20px;"
+  >
+
+    <div class="mini-label">
+      Disaster Alert
+    </div>
+
+    <div
+      class="callout-value"
+      id="disaster-status"
+    >
+      --
+    </div>
+
+    <div
+      class="callout-sub"
+      id="disaster-message"
+    >
+      Waiting for weather analysis...
+    </div>
+
+  </div>
+
+</section>
+<!-- AI MARKET PRICE PREDICTOR -->
+<section class="card">
+
+  <div class="card-head">
+
+    <h2>
+      AI Market Price Predictor
+    </h2>
+
+    <span class="chip chip-emerald">
+      Market AI
+    </span>
+
+  </div>
+
+  <div class="form-row">
+
+    <label class="mini-label">
+      Select Crop
+    </label>
+
+    <select
+      id="market-crop"
+      class="select"
+    >
+
+      <option value="rice">
+        Rice
+      </option>
+
+      <option value="wheat">
+        Wheat
+      </option>
+
+      <option value="maize">
+        Maize
+      </option>
+
+      <option value="soybean">
+        Soybean
+      </option>
+
+    </select>
+
+  </div>
+
+  <button
+    id="btn-market"
+    class="btn btn-primary"
+    style="margin-top:16px;"
+  >
+    Predict Market Price
+  </button>
+
+  <div
+    class="callout"
+    style="margin-top:20px;"
+  >
+
+    <div class="mini-label">
+      Predicted Market Trend
+    </div>
+
+    <div
+      class="callout-value"
+      id="market-status"
+    >
+      --
+    </div>
+
+    <div
+      class="callout-sub"
+      id="market-message"
+    >
+      Waiting for market analysis...
+    </div>
+
+  </div>
+
+</section>
+<!-- SMART FARM MAP -->
+<section class="card">
+
+  <div class="card-head">
+
+    <h2>
+      Smart Farm Location Map
+    </h2>
+
+    <span class="chip chip-emerald">
+      Live Map
+    </span>
+
+  </div>
+
+  <div
+    id="farm-map"
+    style="
+      width:100%;
+      height:350px;
+      border-radius:20px;
+      overflow:hidden;
+    "
+  ></div>
+
+</section>
+
+  <!-- ABOUT -->
+
+  <section
+    id="about"
+    class="about-wrap"
+  >
+
+    <div class="about-card">
+
+      <div class="about-head">
+
+        <h2>
+          About AgroOrbitz
+        </h2>
+
+      </div>
+
+      <p class="about-text">
+
+        AgroOrbitz is an AI-powered agriculture platform
+        integrating weather intelligence,
+        crop recommendation,
+        irrigation advice,
+        NDVI satellite analytics,
+        AI chatbot,
+        voice assistant,
+        and multilingual support.
+
+      </p>
+
+      <div
+        style="
+          margin-top:24px;
+          display:flex;
+          gap:16px;
+          flex-wrap:wrap;
+        "
+      >
+
+        <a
+          href="https://github.com/ISHMEETSINGH1311"
+          target="_blank"
+          class="btn btn-primary"
+        >
+          GitHub
+        </a>
+
+        <a
+          href="https://www.linkedin.com/in/ishmeet-singh-a2b7a1391/"
+          target="_blank"
+          class="btn btn-primary"
+        >
+          LinkedIn
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FEATURES -->
+
+  <section
+    id="features"
+    class="features-wrap"
+  >
+
+    <div class="features-card">
+
+      <div class="features-head">
+
+        <h2>
+          Features
+        </h2>
+
+      </div>
+
+      <div class="features-grid">
+
+        <div class="feature-box">
+          🌦️ Weather Intelligence
+        </div>
+
+        <div class="feature-box">
+          🌾 Crop Recommendation
+        </div>
+
+        <div class="feature-box">
+          🌱 Soil Analysis
+        </div>
+
+        <div class="feature-box">
+          💧 Irrigation Advisor
+        </div>
+
+        <div class="feature-box">
+          🤖 AI Chatbot
+        </div>
+
+        <div class="feature-box">
+          🎤 Voice Assistant
+        </div>
+
+        <div class="feature-box">
+          🌍 Multi-language Support
+        </div>
+
+        <div class="feature-box">
+          🛰️ Satellite NDVI Analytics
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CHATBOT -->
+
+  <button id="chatbot-toggle">
+    💬
+  </button>
+
+  <div id="chatbot-window">
+
+    <div id="chatbot-header">
+
+      <span>
+        Agro AI Assistant
+      </span>
+
+      <button id="chatbot-close">
+        ✕
+      </button>
+
+    </div>
+
+    <div id="chatbot-messages">
+
+      <div class="bot-message">
+
+        Hello 👋 <br>
+        Ask me any farming question.
+
+      </div>
+
+    </div>
+
+    <div id="chatbot-input-area">
+
+      <input
+        type="text"
+        id="chatbot-input"
+        placeholder="Ask Agro AI..."
+      >
+
+      <button id="chatbot-send">
+        Send
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- SCRIPT -->
+   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
