@@ -350,20 +350,73 @@ async function analyzeSoil(){
     compaction
   ];
 
-  await fetchJSON(
-    `${API_BASE}/api/soil/analyze`,
-    {
-      method: "POST",
+  const data =
+    await fetchJSON(
+      `${API_BASE}/api/soil/analyze`,
+      {
+        method: "POST",
 
-      headers: {
-        "Content-Type":
-          "application/json"
-      },
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
 
-      body: JSON.stringify({
-        features
-      })
-    }
+        body: JSON.stringify({
+          features
+        })
+      }
+    );
+
+  let soilStatus =
+    "Healthy Soil";
+
+  let soilMessage =
+    "Soil conditions are optimal for farming.";
+
+  if(moisture < 25){
+
+    soilStatus =
+      "Low Moisture";
+
+    soilMessage =
+      "Increase irrigation immediately.";
+  }
+
+  else if(nitrogen < 15){
+
+    soilStatus =
+      "Nitrogen Deficiency";
+
+    soilMessage =
+      "Add nitrogen fertilizer to improve soil health.";
+  }
+
+  else if(compaction >= 4){
+
+    soilStatus =
+      "High Compaction";
+
+    soilMessage =
+      "Soil is compacted. Aeration recommended.";
+  }
+
+  else if(organicMatter < 10){
+
+    soilStatus =
+      "Low Organic Matter";
+
+    soilMessage =
+      "Add compost or organic nutrients.";
+  }
+
+  setText(
+    "soil-status",
+    soilStatus
+  );
+
+  setText(
+    "soil-message",
+    soilMessage
   );
 
   updateIrrigationAdvice(
