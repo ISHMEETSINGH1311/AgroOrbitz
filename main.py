@@ -1,3 +1,8 @@
+import torch
+import torch.nn as nn
+from torchvision import transforms
+from PIL import Image
+import io
 from pathlib import Path
 import os
 from typing import Any, Dict
@@ -7,7 +12,7 @@ import numpy as np
 import requests
 import joblib
 from fastapi.responses import FileResponse
-from fastapi import FastAPI
+from fastapi import FastAPI,File,UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from reportlab.platypus import (
@@ -21,6 +26,106 @@ from reportlab.lib.styles import (
 )
 
 from reportlab.lib.pagesizes import letter
+# =========================
+# DEVICE CONFIG
+# =========================
+
+device = torch.device(
+    "cuda" if torch.cuda.is_available() else "cpu"
+)
+
+print(f"\nUsing Device: {device}")
+
+# =========================
+# CNN MODEL
+# =========================
+
+class PlantDiseaseCNN(nn.Module):
+
+    def __init__(self):
+
+        super(PlantDiseaseCNN, self).__init__()
+
+        self.conv_layers = nn.Sequential(
+
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+
+        self.fc_layers = nn.Sequential(
+
+            nn.Flatten(),
+
+            nn.Linear(128 * 28 * 28, 512),
+
+            nn.ReLU(),
+
+            nn.Dropout(0.5),
+
+            nn.Linear(512, 5)
+        )
+
+    def forward(self, x):
+
+        x = self.conv_layers(x)
+
+        x = self.fc_layers(x)
+
+        return x
+
+# =========================
+# LOAD MODEL
+# =========================
+
+model = PlantDiseaseCNN().to(device)
+
+model.load_state_dict(
+    torch.load(
+        "models/plant_disease_cnn.pth",
+        map_location=device
+    )
+)
+
+model.eval()
+
+print("Plant Disease Model Loaded ✅")
+
+# =========================
+# IMAGE TRANSFORM
+# =========================
+
+transform = transforms.Compose([
+
+    transforms.Resize((224, 224)),
+
+    transforms.ToTensor()
+])
+
+# =========================
+# CLASS LABELS
+# =========================
+
+classes = [
+
+    "early_blight",
+
+    "healthy",
+
+    "late_blight",
+
+    "leaf_mold",
+
+    "yellow_leaf_curl"
+]
 
 # =========================
 # CONFIG
@@ -872,6 +977,60 @@ def generate_report(payload: Dict[str, Any]):
             media_type="application/pdf",
             filename="AgroOrbitz_Report.pdf"
         )
+
+    except Exception as e:
+
+        return {
+            "error": str(e)
+        }
+    # =========================
+# AI PLANT DISEASE PREDICTION
+# =========================
+
+@app.post("/predict")
+async def predict(file: UploadFile = File(...)):
+
+    try:
+
+        image_bytes = await file.read()
+
+        image = Image.open(
+            io.BytesIO(image_bytes)
+        ).convert("RGB")
+
+        image = transform(image)
+
+        image = image.unsqueeze(0).to(device)
+
+        with torch.no_grad():
+
+            outputs = model(image)
+
+            _, predicted = torch.max(outputs, 1)
+
+            probabilities = torch.nn.functional.softmax(
+                outputs,
+                dim=1
+            )
+
+            confidence = (
+                probabilities[0][predicted]
+                .item() * 100
+            )
+
+        disease = classes[
+            predicted.item()
+        ]
+
+        return {
+
+            "disease": disease,
+
+            "confidence": round(
+                confidence,
+                2
+            )
+        }
 
     except Exception as e:
 

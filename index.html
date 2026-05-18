@@ -712,13 +712,14 @@
     </section>
 
   </main>
-  <!-- AI DISEASE DETECTOR -->
+ <!-- AI PLANT DISEASE DETECTOR -->
+
 <section class="card">
 
   <div class="card-head">
 
     <h2>
-      AI Plant Disease Detector
+      🌿 AI Plant Disease Detector
     </h2>
 
     <span class="chip chip-emerald">
@@ -727,43 +728,42 @@
 
   </div>
 
-  <div class="form-row">
+  <p
+    style="
+      margin-bottom:20px;
+      color:#6b7280;
+    "
+  >
+    Upload a plant leaf image and let AI detect diseases instantly.
+  </p>
 
-    <label class="mini-label">
-      Leaf Condition
-    </label>
+  <input
+    type="file"
+    id="imageInput"
+    accept="image/*"
+    class="text-input"
+  >
 
-    <select
-      id="leaf-condition"
-      class="select"
-    >
+  <br><br>
 
-      <option value="healthy">
-        Healthy Leaf
-      </option>
+  <img
+    id="previewImage"
+    style="
+      display:none;
+      width:100%;
+      max-width:320px;
+      border-radius:16px;
+      margin:auto;
+    "
+  >
 
-      <option value="yellow">
-        Yellow Leaf
-      </option>
-
-      <option value="spots">
-        Brown Spots
-      </option>
-
-      <option value="dry">
-        Dry Leaf
-      </option>
-
-    </select>
-
-  </div>
+  <br><br>
 
   <button
-    id="btn-disease"
+    onclick="predictDisease()"
     class="btn btn-primary"
-    style="margin-top:16px;"
   >
-    Detect Disease
+    Predict Disease
   </button>
 
   <div
@@ -772,7 +772,7 @@
   >
 
     <div class="mini-label">
-      Disease Prediction
+      AI Prediction Result
     </div>
 
     <div
@@ -786,7 +786,7 @@
       class="callout-sub"
       id="disease-message"
     >
-      Waiting for AI analysis...
+      Upload a leaf image for AI analysis.
     </div>
 
   </div>

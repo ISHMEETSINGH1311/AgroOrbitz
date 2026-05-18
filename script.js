@@ -526,11 +526,7 @@ document.addEventListener(
         "click",
         analyzeNDVI
       );
-      $("btn-disease")
-        ?.addEventListener(
-          "click",
-          detectDisease
-      );
+      
       $("btn-yield")
         ?.addEventListener(
           "click",
@@ -1078,61 +1074,7 @@ function updateCropWeatherAdvisor(){
    AI PLANT DISEASE DETECTOR
 ========================================= */
 
-function detectDisease(){
 
-  const condition =
-    $("leaf-condition")
-      ?.value;
-
-  let disease = "";
-  let message = "";
-
-  if(condition === "healthy"){
-
-    disease =
-      "Healthy Plant";
-
-    message =
-      "No disease detected. Crop health is excellent.";
-  }
-
-  else if(condition === "yellow"){
-
-    disease =
-      "Nitrogen Deficiency";
-
-    message =
-      "Leaves show yellowing. Add nitrogen fertilizer.";
-  }
-
-  else if(condition === "spots"){
-
-    disease =
-      "Leaf Spot Disease";
-
-    message =
-      "Brown spots detected. Apply fungicide treatment.";
-  }
-
-  else{
-
-    disease =
-      "Drought Stress";
-
-    message =
-      "Leaf dryness detected. Increase irrigation immediately.";
-  }
-
-  setText(
-    "disease-status",
-    disease
-  );
-
-  setText(
-    "disease-message",
-    message
-  );
-}
 /* =========================================
    AI YIELD PREDICTOR
 ========================================= */
@@ -1788,3 +1730,69 @@ languageSelect?.addEventListener(
       t.ndvi;
   }
 );
+const imageInput = document.getElementById("imageInput");
+
+const previewImage = document.getElementById("previewImage");
+
+imageInput.addEventListener("change", () => {
+
+  const file = imageInput.files[0];
+
+  if (file) {
+
+    previewImage.src = URL.createObjectURL(file);
+
+    previewImage.style.display = "block";
+  }
+});
+
+async function predictDisease() {
+
+  const file = imageInput.files[0];
+
+  if (!file) {
+
+    alert("Please upload an image first");
+
+    return;
+  }
+
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  document.getElementById("disease-status").innerHTML =
+    "Analyzing...";
+
+  document.getElementById("disease-message").innerHTML =
+    "AI model is processing the leaf image.";
+
+  try {
+
+    const response = await fetch(
+      "https://agroorbitz-api.onrender.com/predict",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    const data = await response.json();
+
+    document.getElementById("disease-status").innerHTML =
+      data.disease;
+
+    document.getElementById("disease-message").innerHTML =
+      `Confidence: ${data.confidence}%`;
+
+  } catch (error) {
+
+    console.error(error);
+
+    document.getElementById("disease-status").innerHTML =
+      "Prediction Failed";
+
+    document.getElementById("disease-message").innerHTML =
+      "Backend connection error.";
+  }
+}
