@@ -1798,12 +1798,12 @@ async function predictDisease() {
 
   } catch (error) {
 
-    console.error(error);
+  console.error(error);
 
-    document.getElementById("disease-status").innerHTML =
-      "Prediction Failed";
+  document.getElementById("disease-status").innerHTML =
+    "Prediction Failed";
 
-    document.getElementById("disease-message").innerHTML =
-      "Backend connection error.";
+  document.getElementById("disease-message").innerHTML =
+    "Backend connection error.";
   }
 }
