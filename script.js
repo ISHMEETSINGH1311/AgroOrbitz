@@ -1767,36 +1767,41 @@ async function predictDisease() {
   document.getElementById("disease-message").innerHTML =
     "AI model is processing the uploaded plant image.";
 
-  try {
+try {
 
-    const response = await fetch(
-      "https://agroorbitz-api.onrender.com/predict",
-      {
-        method: "POST",
-        body: formData
-      }
-    );
+  const response = await fetch(
+    "https://agroorbitz-api.onrender.com/predict",
+    {
+      method: "POST",
+      body: formData
+    }
+  );
 
-    const data = await response.json();
+  const data = await response.json();
 
-    document.getElementById("disease-status").innerHTML =
-      `🌱 ${data.disease}`;
+  document.getElementById("disease-status").innerHTML =
+    `🌱 ${data.disease}`;
 
-    document.getElementById("disease-message").innerHTML =
-      `
-      <strong>Confidence:</strong> ${data.confidence}% <br><br>
+  document.getElementById("disease-message").innerHTML =
+    `
+    <strong>Confidence:</strong> ${data.confidence}% <br><br>
 
-      <strong>🦠 Cause:</strong><br>
-      ${data.cause} <br><br>
+    <strong>🦠 Cause:</strong><br>
+    ${data.cause} <br><br>
 
-      <strong>💊 Treatment:</strong><br>
-      ${data.treatment} <br><br>
+    <strong>💊 Treatment:</strong><br>
+    ${data.treatment} <br><br>
 
-      <strong>🛡️ Prevention:</strong><br>
-      ${data.prevention}
-      `;
+    <strong>🛡️ Prevention:</strong><br>
+    ${data.prevention}
+    `;
 
-  } catch (error) {
+  document.getElementById(
+    "confidence-fill"
+  ).style.width =
+    `${data.confidence}%`;
+
+} catch (error) {
 
   console.error(error);
 
@@ -1806,8 +1811,4 @@ async function predictDisease() {
   document.getElementById("disease-message").innerHTML =
     "Backend connection error.";
   }
-  document.getElementById(
-  "confidence-fill"
-).style.width =
-  `${data.confidence}%`;
 }
