@@ -1762,10 +1762,10 @@ async function predictDisease() {
   formData.append("file", file);
 
   document.getElementById("disease-status").innerHTML =
-    "Analyzing...";
+    "🌿 Analyzing Leaf...";
 
   document.getElementById("disease-message").innerHTML =
-    "AI model is processing the leaf image.";
+    "AI model is processing the uploaded plant image.";
 
   try {
 
@@ -1780,10 +1780,21 @@ async function predictDisease() {
     const data = await response.json();
 
     document.getElementById("disease-status").innerHTML =
-      data.disease;
+      `🌱 ${data.disease}`;
 
     document.getElementById("disease-message").innerHTML =
-      `Confidence: ${data.confidence}%`;
+      `
+      <strong>Confidence:</strong> ${data.confidence}% <br><br>
+
+      <strong>🦠 Cause:</strong><br>
+      ${data.cause} <br><br>
+
+      <strong>💊 Treatment:</strong><br>
+      ${data.treatment} <br><br>
+
+      <strong>🛡️ Prevention:</strong><br>
+      ${data.prevention}
+      `;
 
   } catch (error) {
 

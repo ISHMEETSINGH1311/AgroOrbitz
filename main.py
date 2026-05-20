@@ -93,6 +93,25 @@ classes = [
 
     "yellow_leaf_curl"
 ]
+disease_info = {
+    "early_blight": {
+        "cause": "Fungal infection caused by Alternaria fungus.",
+        "treatment": "Apply copper-based fungicide and remove infected leaves.",
+        "prevention": "Avoid overhead watering and maintain proper airflow."
+    },
+
+    "late_blight": {
+        "cause": "Caused by Phytophthora infestans fungus.",
+        "treatment": "Use blight-resistant fungicides immediately.",
+        "prevention": "Keep leaves dry and avoid excessive moisture."
+    },
+
+    "healthy": {
+        "cause": "Plant is healthy.",
+        "treatment": "No treatment required.",
+        "prevention": "Continue proper plant care."
+    }
+}
 
 # =========================
 # CONFIG
@@ -951,6 +970,7 @@ def generate_report(payload: Dict[str, Any]):
             "error": str(e)
         }
     # =========================
+# =========================
 # AI PLANT DISEASE PREDICTION
 # =========================
 
@@ -989,6 +1009,19 @@ async def predict(file: UploadFile = File(...)):
             predicted.item()
         ]
 
+        # =========================
+        # SAFE DISEASE INFO
+        # =========================
+
+        info = disease_info.get(
+            disease,
+            {
+                "cause": "Information not available.",
+                "treatment": "Consult agricultural expert.",
+                "prevention": "Monitor crop health regularly."
+            }
+        )
+
         return {
 
             "disease": disease,
@@ -996,7 +1029,13 @@ async def predict(file: UploadFile = File(...)):
             "confidence": round(
                 confidence,
                 2
-            )
+            ),
+
+            "cause": info["cause"],
+
+            "treatment": info["treatment"],
+
+            "prevention": info["prevention"]
         }
 
     except Exception as e:
