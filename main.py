@@ -1,3 +1,4 @@
+from torchvision import models
 import torch
 import torch.nn as nn
 from torchvision import transforms
@@ -40,65 +41,31 @@ print(f"\nUsing Device: {device}")
 # CNN MODEL
 # =========================
 
-class PlantDiseaseCNN(nn.Module):
 
-    def __init__(self):
-
-        super(PlantDiseaseCNN, self).__init__()
-
-        self.conv_layers = nn.Sequential(
-
-            nn.Conv2d(3, 32, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
-        )
-
-        self.fc_layers = nn.Sequential(
-
-            nn.Flatten(),
-
-            nn.Linear(128 * 28 * 28, 512),
-
-            nn.ReLU(),
-
-            nn.Dropout(0.5),
-
-            nn.Linear(512, 5)
-        )
-
-    def forward(self, x):
-
-        x = self.conv_layers(x)
-
-        x = self.fc_layers(x)
-
-        return x
 
 # =========================
-# LOAD MODEL
+# LOAD MOBILENETV2 MODEL
 # =========================
 
-model = PlantDiseaseCNN().to(device)
+model = models.mobilenet_v2(weights=None)
+
+model.classifier[1] = nn.Linear(
+    model.last_channel,
+    5
+)
 
 model.load_state_dict(
     torch.load(
-        "models/plant_disease_cnn.pth",
+        "models/plant_disease_mobilenetv2.pth",
         map_location=device
     )
 )
 
+model = model.to(device)
+
 model.eval()
 
-print("Plant Disease Model Loaded ✅")
-
+print("MobileNetV2 Model Loaded ✅")
 # =========================
 # IMAGE TRANSFORM
 # =========================
