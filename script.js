@@ -1806,4 +1806,8 @@ async function predictDisease() {
   document.getElementById("disease-message").innerHTML =
     "Backend connection error.";
   }
+  document.getElementById(
+  "confidence-fill"
+).style.width =
+  `${data.confidence}%`;
 }
